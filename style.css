@@ -350,3 +350,37 @@ h2 {
         font-size: 25px;
     }
 }
+/* Мұғалім фотосы */
+.teacher-profile {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.teacher-photo {
+    width: 145px;
+    height: 145px;
+    object-fit: cover;
+    object-position: center 25%;
+    border-radius: 50%;
+    border: 5px solid #eef1ff;
+    box-shadow: 0 8px 25px rgba(38, 60, 122, 0.22);
+    transition: transform 0.3s ease;
+}
+
+.teacher-photo:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+    .teacher-photo {
+        width: 115px;
+        height: 115px;
+    }
+}
+.teacher-label {
+    margin: -5px 0 12px;
+    color: #667085;
+    font-size: 14px;
+    font-weight: 600;
+}
