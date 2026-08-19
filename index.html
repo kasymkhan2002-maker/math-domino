@@ -153,7 +153,63 @@
             <h3>🤖 ЖИ қорытындысы</h3>
             <p id="resultAIText">Нәтиже талданып жатыр...</p>
         </div>
+<!-- ЖИ РЕФЛЕКСИЯ -->
+<div class="reflection-box">
 
+    <h3>🪞 Менің рефлексиям</h3>
+    <p class="reflection-subtitle">
+        Бүгінгі сабақты қалай меңгердің?
+    </p>
+
+    <div class="reflection-options">
+
+        <button type="button"
+                class="reflection-option"
+                onclick="selectReflection('understood', this)">
+            <span class="reflection-emoji">😊</span>
+            <strong>Түсіндім</strong>
+            <small>Өзім орындай аламын</small>
+        </button>
+
+        <button type="button"
+                class="reflection-option"
+                onclick="selectReflection('practice', this)">
+            <span class="reflection-emoji">🤔</span>
+            <strong>Жаттығу керек</strong>
+            <small>Тағы да қайталағым келеді</small>
+        </button>
+
+        <button type="button"
+                class="reflection-option"
+                onclick="selectReflection('help', this)">
+            <span class="reflection-emoji">🆘</span>
+            <strong>Көмек керек</strong>
+            <small>Мұғаліммен бірге талқылаймын</small>
+        </button>
+
+    </div>
+
+    <textarea
+        id="reflectionText"
+        maxlength="300"
+        placeholder="✍️ Бүгін не үйрендің? Қай тапсырма қиын болды?"
+    ></textarea>
+
+    <button
+        type="button"
+        class="reflection-ai-button"
+        onclick="sendReflection()">
+        🤖 ЖИ-мен рефлексия жасау
+    </button>
+
+    <div id="reflectionAIResult" style="display: none;">
+        <h4>✨ ЖИ-дің саған пікірі</h4>
+        <p id="reflectionAIText"></p>
+    </div>
+
+    <p id="reflectionMessage"></p>
+
+</div>
         <button onclick="restartGame()">
             🔄 Қайта ойнау
         </button>

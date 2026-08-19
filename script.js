@@ -111,7 +111,7 @@ let streak = 0;
 let chainItems = [];
 let mistakeCount = 0;
 let totalMistakes = 0;
-
+let selectedReflection = "";
 // ==========================================
 // ЕСЕПТІ ЭКРАНҒА ШЫҒАРУ
 // ==========================================
@@ -534,7 +534,77 @@ function restartGame() {
     document.getElementById("streak").innerText = "0";
     document.getElementById("resultAIText").innerText =
         "Нәтиже талданып жатыр...";
+selectedReflection = "";
 
+document.querySelectorAll(".reflection-option").forEach(option => {
+    option.classList.remove("selected");
+});
+
+document.getElementById("reflectionText").value = "";
+document.getElementById("reflectionMessage").innerText = "";
+document.getElementById("reflectionAIResult").style.display = "none";
+document.getElementById("reflectionAIText").innerText = "";
     loadQuestion();
+}
+function selectReflection(value, button) {
+    selectedReflection = value;
+
+    document.querySelectorAll(".reflection-option").forEach(option => {
+        option.classList.remove("selected");
+    });
+
+    button.classList.add("selected");
+
+    document.getElementById("reflectionMessage").innerText = "";
+}
+async function sendReflection() {
+    const message = document.getElementById("reflectionMessage");
+    const aiBox = document.getElementById("reflectionAIResult");
+    const aiText = document.getElementById("reflectionAIText");
+
+    if (!selectedReflection) {
+        message.innerText = "⚠️ Алдымен рефлексияның біреуін таңда.";
+        return;
+    }
+
+    const reflectionText =
+        document.getElementById("reflectionText").value.trim();
+
+    const studentName =
+        document.getElementById("welcomeStudentName").innerText;
+
+    message.innerText = "🤖 ЖИ сенің рефлексияңды талдап жатыр...";
+    aiBox.style.display = "none";
+
+    try {
+        const response = await fetch("/ai-reflection", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                studentName: studentName,
+                score: score,
+                maxScore: questions.length * 10,
+                totalMistakes: totalMistakes,
+                reflection: selectedReflection,
+                reflectionText: reflectionText
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            aiText.innerText = data.feedback;
+            aiBox.style.display = "block";
+            message.innerText = "✅ Рефлексия дайын!";
+        } else {
+            message.innerText = "❌ ЖИ рефлексиясын алу мүмкін болмады.";
+        }
+
+    } catch (error) {
+        console.error(error);
+        message.innerText = "❌ Сервермен байланысу кезінде қате шықты.";
+    }
 }
 loadQuestion();

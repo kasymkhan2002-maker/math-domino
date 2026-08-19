@@ -264,7 +264,69 @@ app.post("/ai-summary", async (req, res) => {
     }
 
 });
+// ЖИ РЕФЛЕКСИЯ
+app.post("/ai-reflection", async (req, res) => {
+    try {
+        const {
+            studentName,
+            score,
+            maxScore,
+            totalMistakes,
+            reflection,
+            reflectionText
+        } = req.body;
 
+        const reflectionNames = {
+            understood: "😊 Түсіндім, өзім орындай аламын",
+            practice: "🤔 Әлі де жаттығу керек",
+            help: "🆘 Мұғалімнің көмегі керек"
+        };
+
+        const response = await openai.responses.create({
+            model: "gpt-5-mini",
+
+            input: `
+Сен 6-сынып оқушысына көмектесетін қазақ тіліндегі математика мұғалімісің.
+
+Тақырып: Рационал сандарға арифметикалық амалдар қолдану.
+
+Оқушы: ${studentName}
+Нәтижесі: ${score} / ${maxScore}
+Қате саны: ${totalMistakes}
+
+Оқушының өзіндік бағалауы:
+${reflectionNames[reflection] || reflection}
+
+Оқушының пікірі:
+${reflectionText || "Пікір жазбады."}
+
+Оқушыға қысқа жеке кері байланыс бер.
+
+Талаптар:
+- Қазақ тілінде жаз.
+- 6-сынып оқушысына түсінікті болсын.
+- Бір жақсы жағын атап өт.
+- Қиналған тұсына қысқа кеңес бер.
+- Дайын есептің жауабын берме.
+- Ынталандыратын сөйлеммен аяқта.
+- 3-5 сөйлемнен асырма.
+`
+        });
+
+        res.json({
+            success: true,
+            feedback: response.output_text
+        });
+
+    } catch (error) {
+        console.error("ЖИ рефлексия қатесі:", error);
+
+        res.status(500).json({
+            success: false,
+            feedback: "ЖИ рефлексиясын алу кезінде қате шықты."
+        });
+    }
+});
 // Серверді іске қосу
 
 app.listen(3000, () => {
