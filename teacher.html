@@ -181,7 +181,19 @@
 
     async function loadResults() {
         try {
-            const response = await fetch("/api/teacher/results");
+            const password = prompt("🔐 Мұғалім құпия сөзін енгізіңіз:");
+
+if (!password) {
+    document.getElementById("emptyMessage").style.display = "block";
+    document.getElementById("emptyMessage").innerText =
+        "🔒 Мұғалім құпия сөзі енгізілмеді.";
+    return;
+}
+     const response = await fetch("/api/teacher/results", {
+    headers: {
+        "x-teacher-password": password
+    }
+});
             const data = await response.json();
 
             if (!data.success) {
