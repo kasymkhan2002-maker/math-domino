@@ -372,7 +372,14 @@ function finishGame() {
 
 document.getElementById("aiMessage").innerText =
     "🤖 ЖИ сенің нәтижеңді талдап жатыр...";
+document.getElementById("gameContainer").style.display = "none";
+document.getElementById("resultCard").style.display = "block";
 
+document.getElementById("resultStudentName").innerText =
+    document.getElementById("welcomeStudentName").innerText;
+
+document.getElementById("resultScore").innerText = score;
+document.getElementById("resultMistakes").innerText = totalMistakes;
 getFinalAIAnalysis();
 
 }
@@ -403,12 +410,13 @@ async function getFinalAIAnalysis() {
 
         aiMessage.innerText =
             "📊 ЖИ қорытындысы:\n\n" + data.summary;
-
+document.getElementById("resultAIText").innerText = data.summary;
     } catch (error) {
 
         aiMessage.innerText =
             "❌ ЖИ қорытындысын алу мүмкін болмады.";
-
+document.getElementById("resultAIText").innerText =
+    "ЖИ қорытындысын алу мүмкін болмады.";
         console.error(error);
     }
 }
@@ -501,6 +509,7 @@ async function loginStudent() {
         if (data.success) {
             document.getElementById("authContainer").style.display = "none";
             document.getElementById("gameContainer").style.display = "block";
+            document.getElementById("welcomeStudentName").innerText = data.student.name;
             loadQuestion();
         } else {
             message.innerText = data.message;
@@ -510,5 +519,22 @@ async function loginStudent() {
         message.innerText = "❌ Кіру кезінде қате шықты.";
     }
 }
+function restartGame() {
+    currentQuestion = 0;
+    score = 0;
+    streak = 0;
+    mistakeCount = 0;
+    totalMistakes = 0;
+    chainItems = [];
 
+    document.getElementById("resultCard").style.display = "none";
+    document.getElementById("gameContainer").style.display = "block";
+
+    document.getElementById("score").innerText = "0";
+    document.getElementById("streak").innerText = "0";
+    document.getElementById("resultAIText").innerText =
+        "Нәтиже талданып жатыр...";
+
+    loadQuestion();
+}
 loadQuestion();

@@ -40,7 +40,9 @@
 
 </div>
 <div class="container" id="gameContainer" style="display: none;">
-
+<div id="welcomeStudent">
+    👋 Қош келдің, <span id="welcomeStudentName"></span>!
+</div>
     <h1>🧠 Математикалық домино</h1>
 
     <h2>Рационал сандарға арифметикалық амалдар қолдану</h2>
@@ -120,6 +122,40 @@
 </div>
 
 <script src="script.js"></script>
+<!-- ОҚУШЫ НӘТИЖЕСІ -->
+<div id="resultCard" style="display: none;">
+    <div class="result-card">
 
+        <div class="result-icon">🏆</div>
+
+        <h2>Ойын аяқталды!</h2>
+
+        <p class="result-student">
+            👤 <span id="resultStudentName"></span>
+        </p>
+
+        <div class="result-stats">
+            <div>
+                <strong id="resultScore">0</strong>
+                <span>Ұпай</span>
+            </div>
+
+            <div>
+                <strong id="resultMistakes">0</strong>
+                <span>Қате</span>
+            </div>
+        </div>
+
+        <div class="result-ai">
+            <h3>🤖 ЖИ қорытындысы</h3>
+            <p id="resultAIText">Нәтиже талданып жатыр...</p>
+        </div>
+
+        <button onclick="restartGame()">
+            🔄 Қайта ойнау
+        </button>
+
+    </div>
+</div>
 </body>
 </html>
