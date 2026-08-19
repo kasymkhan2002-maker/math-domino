@@ -520,3 +520,20 @@ h2 {
         min-height: auto;
     }
 }
+.teacher-login-btn {
+    display: block;
+    margin-top: 18px;
+    padding: 13px;
+    border-radius: 12px;
+    background: #f3f5ff;
+    color: #263c7a;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    transition: 0.2s;
+}
+
+.teacher-login-btn:hover {
+    background: #e7ebff;
+    transform: translateY(-1px);
+}
