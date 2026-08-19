@@ -416,5 +416,34 @@ async function getFinalAIAnalysis() {
 
 
 // ОЙЫНДЫ БАСТАУ
+function setLevel(level) {
+    if (level === "easy") {
+        currentQuestion = 0;
+        document.getElementById("aiMessage").innerText =
+            "🟢 Жеңіл деңгей таңдалды.";
+    }
 
+    if (level === "medium") {
+        currentQuestion = Math.floor(questions.length / 3);
+        document.getElementById("aiMessage").innerText =
+            "🟡 Орта деңгей таңдалды.";
+    }
+
+    if (level === "hard") {
+        currentQuestion = Math.floor((questions.length * 2) / 3);
+        document.getElementById("aiMessage").innerText =
+            "🔴 Қиын деңгей таңдалды.";
+    }
+
+    score = 0;
+    streak = 0;
+    mistakeCount = 0;
+    totalMistakes = 0;
+    chainItems = [];
+
+    document.getElementById("score").innerText = score;
+    document.getElementById("streak").innerText = streak;
+
+    loadQuestion();
+}
 loadQuestion();
