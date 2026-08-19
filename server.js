@@ -29,6 +29,29 @@ async function createStudentsTable() {
 }
 
 createStudentsTable();
+async function createResultsTable() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS student_results (
+                id SERIAL PRIMARY KEY,
+                student_name VARCHAR(100) NOT NULL,
+                score INTEGER NOT NULL,
+                max_score INTEGER NOT NULL,
+                total_mistakes INTEGER DEFAULT 0,
+                reflection VARCHAR(50),
+                reflection_text TEXT,
+                ai_feedback TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        console.log("Оқушы нәтижелері кестесі дайын!");
+    } catch (error) {
+        console.error("Нәтиже кестесін жасау қатесі:", error);
+    }
+}
+
+createResultsTable();
 app.use(express.json());
 app.use(express.static(__dirname));
 // ОҚУШЫНЫ ТІРКЕУ
@@ -312,10 +335,33 @@ ${reflectionText || "Пікір жазбады."}
 - 3-5 сөйлемнен асырма.
 `
         });
+const aiFeedback = response.output_text;
 
+await pool.query(
+    `INSERT INTO student_results
+    (
+        student_name,
+        score,
+        max_score,
+        total_mistakes,
+        reflection,
+        reflection_text,
+        ai_feedback
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [
+        studentName,
+        score,
+        maxScore,
+        totalMistakes,
+        reflection,
+        reflectionText,
+        aiFeedback
+    ]
+);
         res.json({
             success: true,
-            feedback: response.output_text
+           feedback: aiFeedback
         });
 
     } catch (error) {
@@ -327,6 +373,82 @@ ${reflectionText || "Пікір жазбады."}
         });
     }
 });
+// ===============================
+// МҰҒАЛІМ ПАНЕЛІ — НӘТИЖЕЛЕР
+// ===============================
+app.get("/api/teacher/results", async (req, res) => {
+    try {
+        const teacherPassword = req.headers["x-teacher-password"];
+
+        if (
+            !process.env.TEACHER_PASSWORD ||
+            teacherPassword !== process.env.TEACHER_PASSWORD
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Құпия сөз дұрыс емес."
+            });
+        }
+
+        const result = await pool.query(`
+            SELECT
+                id,
+                student_name,
+                score,
+                max_score,
+                total_mistakes,
+                reflection,
+                reflection_text,
+                ai_feedback,
+                created_at
+            FROM student_results
+            ORDER BY created_at DESC
+        `);
+
+        res.json({
+            success: true,
+            results: result.rows
+        });
+
+    } catch (error) {
+        console.error("Нәтижелерді алу қатесі:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Оқушы нәтижелерін алу мүмкін болмады."
+        });
+    }
+});
+    try {
+        const result = await pool.query(`
+            SELECT
+                id,
+                student_name,
+                score,
+                max_score,
+                total_mistakes,
+                reflection,
+                reflection_text,
+                ai_feedback,
+                created_at
+            FROM student_results
+            ORDER BY created_at DESC
+        `);
+
+        res.json({
+            success: true,
+            results: result.rows
+        });
+
+    } catch (error) {
+        console.error("Нәтижелерді алу қатесі:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "Оқушы нәтижелерін алу мүмкін болмады."
+        });
+    }
+
 // Серверді іске қосу
 
 app.listen(3000, () => {

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мұғалім панелі — Математикалық домино</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #263c7a;
+        }
+
+        .dashboard {
+            width: min(1200px, calc(100% - 30px));
+            margin: 35px auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(38, 60, 122, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #667085;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(38, 60, 122, 0.07);
+        }
+
+        .stat-card span {
+            color: #667085;
+            font-size: 14px;
+        }
+
+        .stat-card strong {
+            display: block;
+            margin-top: 8px;
+            font-size: 30px;
+        }
+
+        .table-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(38, 60, 122, 0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: top;
+        }
+
+        th {
+            background: #f7f8fc;
+            color: #263c7a;
+        }
+
+        .reflection {
+            font-weight: bold;
+        }
+
+        .ai-feedback {
+            max-width: 330px;
+            line-height: 1.5;
+        }
+
+        .empty {
+            padding: 35px;
+            text-align: center;
+            color: #667085;
+        }
+
+        @media (max-width: 700px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <div class="header">
+        <h1>👨‍🏫 Мұғалім панелі</h1>
+        <p>Математикалық домино — оқушылардың нәтижелері</p>
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <span>👥 Нәтижелер саны</span>
+            <strong id="totalStudents">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>⭐ Орташа ұпай</span>
+            <strong id="averageScore">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>❌ Жалпы қате</span>
+            <strong id="totalMistakes">0</strong>
+        </div>
+
+    </div>
+
+    <div class="table-box">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Оқушы</th>
+                    <th>Нәтиже</th>
+                    <th>Қате</th>
+                    <th>Рефлексия</th>
+                    <th>Оқушы пікірі</th>
+                    <th>🤖 ЖИ пікірі</th>
+                    <th>Уақыты</th>
+                </tr>
+            </thead>
+
+            <tbody id="resultsBody"></tbody>
+        </table>
+
+        <div id="emptyMessage" class="empty" style="display:none;">
+            Әзірге сақталған нәтиже жоқ.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function reflectionName(value) {
+        if (value === "understood") return "😊 Түсіндім";
+        if (value === "practice") return "🤔 Жаттығу керек";
+        if (value === "help") return "🆘 Көмек керек";
+        return "—";
+    }
+
+    async function loadResults() {
+        try {
+            const response = await fetch("/api/teacher/results");
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error("Нәтижелер алынбады");
+            }
+
+            const results = data.results;
+            const tbody = document.getElementById("resultsBody");
+
+            tbody.innerHTML = "";
+
+            if (results.length === 0) {
+                document.getElementById("emptyMessage").style.display = "block";
+                return;
+            }
+
+            document.getElementById("emptyMessage").style.display = "none";
+
+            let scoreSum = 0;
+            let mistakesSum = 0;
+
+            results.forEach(item => {
+                scoreSum += Number(item.score);
+                mistakesSum += Number(item.total_mistakes);
+
+                const row = document.createElement("tr");
+
+                const values = [
+                    item.student_name,
+                    `${item.score} / ${item.max_score}`,
+                    item.total_mistakes,
+                    reflectionName(item.reflection),
+                    item.reflection_text || "—",
+                    item.ai_feedback || "—",
+                    new Date(item.created_at).toLocaleString("kk-KZ")
+                ];
+
+                values.forEach((value, index) => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value;
+
+                    if (index === 3) cell.className = "reflection";
+                    if (index === 5) cell.className = "ai-feedback";
+
+                    row.appendChild(cell);
+                });
+
+                tbody.appendChild(row);
+            });
+
+            document.getElementById("totalStudents").innerText =
+                results.length;
+
+            document.getElementById("averageScore").innerText =
+                Math.round(scoreSum / results.length);
+
+            document.getElementById("totalMistakes").innerText =
+                mistakesSum;
+
+        } catch (error) {
+            console.error(error);
+
+            document.getElementById("emptyMessage").style.display = "block";
+            document.getElementById("emptyMessage").innerText =
+                "❌ Нәтижелерді жүктеу мүмкін болмады.";
+        }
+    }
+
+    loadResults();
+</script>
+
+</body>
+</html>
