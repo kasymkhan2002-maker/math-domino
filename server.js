@@ -419,35 +419,6 @@ app.get("/api/teacher/results", async (req, res) => {
         });
     }
 });
-    try {
-        const result = await pool.query(`
-            SELECT
-                id,
-                student_name,
-                score,
-                max_score,
-                total_mistakes,
-                reflection,
-                reflection_text,
-                ai_feedback,
-                created_at
-            FROM student_results
-            ORDER BY created_at DESC
-        `);
-
-        res.json({
-            success: true,
-            results: result.rows
-        });
-
-    } catch (error) {
-        console.error("Нәтижелерді алу қатесі:", error);
-
-        res.status(500).json({
-            success: false,
-            message: "Оқушы нәтижелерін алу мүмкін болмады."
-        });
-    }
 
 // Серверді іске қосу
 
