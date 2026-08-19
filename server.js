@@ -1,12 +1,144 @@
 const express = require("express");
 const OpenAI = require("openai");
+const bcrypt = require("bcryptjs");
+const { Pool } = require("pg");
 require("dotenv").config();
 
 const app = express();
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL
+        ? { rejectUnauthorized: false }
+        : false
+});
+async function createStudentsTable() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS students (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
 
+        console.log("Оқушылар кестесі дайын!");
+    } catch (error) {
+        console.error("Кесте жасау қатесі:", error);
+    }
+}
+
+createStudentsTable();
 app.use(express.json());
 app.use(express.static(__dirname));
+// ОҚУШЫНЫ ТІРКЕУ
+app.post("/register", async (req, res) => {
+    try {
+        const { name, password } = req.body;
 
+        if (!name || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Аты-жөні мен құпия сөзді енгізіңіз."
+            });
+        }
+
+        if (password.length < 4) {
+            return res.status(400).json({
+                success: false,
+                message: "Құпия сөз кемінде 4 таңбадан тұрсын."
+            });
+        }
+
+        const existing = await pool.query(
+            "SELECT id FROM students WHERE name = $1",
+            [name]
+        );
+
+        if (existing.rows.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: "Бұл оқушы бұрын тіркелген."
+            });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+
+        await pool.query(
+            "INSERT INTO students (name, password_hash) VALUES ($1, $2)",
+            [name, passwordHash]
+        );
+
+        res.json({
+            success: true,
+            message: "✅ Тіркелу сәтті! Енді «Кіру» батырмасын басыңыз."
+        });
+
+    } catch (error) {
+        console.error("Тіркелу қатесі:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "❌ Тіркелу кезінде қате шықты."
+        });
+    }
+});
+// ОҚУШЫНЫҢ КІРУІ
+app.post("/login", async (req, res) => {
+    try {
+        const { name, password } = req.body;
+
+        if (!name || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Аты-жөні мен құпия сөзді енгізіңіз."
+            });
+        }
+
+        const result = await pool.query(
+            "SELECT * FROM students WHERE name = $1",
+            [name]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: "❌ Мұндай оқушы тіркелмеген."
+            });
+        }
+
+        const student = result.rows[0];
+
+        const passwordCorrect = await bcrypt.compare(
+            password,
+            student.password_hash
+        );
+
+        if (!passwordCorrect) {
+            return res.status(401).json({
+                success: false,
+                message: "❌ Құпия сөз дұрыс емес."
+            });
+        }
+
+        res.json({
+            success: true,
+            message: "✅ Кіру сәтті!",
+            student: {
+                id: student.id,
+                name: student.name
+            }
+        });
+
+    } catch (error) {
+        console.error("Кіру қатесі:", error);
+
+        res.status(500).json({
+            success: false,
+            message: "❌ Кіру кезінде қате шықты."
+        });
+    }
+});
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });

@@ -10,8 +10,36 @@
 </head>
 
 <body>
+<!-- КІРУ / ТІРКЕЛУ БӨЛІМІ -->
+<div id="authContainer">
 
-<div class="container">
+    <h1>🔐 Математикалық домино</h1>
+    <h2>Оқушының жеке кабинеті</h2>
+
+    <input
+        type="text"
+        id="studentName"
+        placeholder="Аты-жөніңіз"
+    >
+
+    <input
+        type="password"
+        id="studentPassword"
+        placeholder="Құпия сөз"
+    >
+
+    <button onclick="loginStudent()">
+        🔑 Кіру
+    </button>
+
+    <button onclick="registerStudent()">
+        ✍️ Тіркелу
+    </button>
+
+    <p id="authMessage"></p>
+
+</div>
+<div class="container" id="gameContainer" style="display: none;">
 
     <h1>🧠 Математикалық домино</h1>
 

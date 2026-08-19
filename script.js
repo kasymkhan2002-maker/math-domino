@@ -446,4 +446,69 @@ function setLevel(level) {
 
     loadQuestion();
 }
+async function registerStudent() {
+    const name = document.getElementById("studentName").value.trim();
+    const password = document.getElementById("studentPassword").value;
+    const message = document.getElementById("authMessage");
+
+    if (!name || !password) {
+        message.innerText = "⚠️ Аты-жөніңіз бен құпия сөзді енгізіңіз.";
+        return;
+    }
+
+    message.innerText = "⏳ Тіркеліп жатыр...";
+
+    try {
+        const response = await fetch("/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, password })
+        });
+
+        const data = await response.json();
+        message.innerText = data.message;
+    } catch (error) {
+        message.innerText = "❌ Тіркелу кезінде қате шықты.";
+    }
+}
+
+
+async function loginStudent() {
+    const name = document.getElementById("studentName").value.trim();
+    const password = document.getElementById("studentPassword").value;
+    const message = document.getElementById("authMessage");
+
+    if (!name || !password) {
+        message.innerText = "⚠️ Аты-жөніңіз бен құпия сөзді енгізіңіз.";
+        return;
+    }
+
+    message.innerText = "⏳ Тексеріліп жатыр...";
+
+    try {
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ name, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById("authContainer").style.display = "none";
+            document.getElementById("gameContainer").style.display = "block";
+            loadQuestion();
+        } else {
+            message.innerText = data.message;
+        }
+
+    } catch (error) {
+        message.innerText = "❌ Кіру кезінде қате шықты.";
+    }
+}
+
 loadQuestion();
