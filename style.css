@@ -1,0 +1,141 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #eef4ff;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    text-align: center;
+}
+
+h1 {
+    color: #263c7a;
+    margin-bottom: 5px;
+}
+
+h2 {
+    color: #52658f;
+    font-size: 21px;
+}
+
+.description {
+    font-size: 18px;
+    color: #555;
+}
+
+.info {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    padding: 15px;
+    margin: 25px 0;
+    border-radius: 15px;
+    font-size: 19px;
+}
+
+.question-box {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+.question-box p {
+    font-size: 18px;
+}
+
+#question {
+    font-size: 42px;
+    font-weight: bold;
+    color: #1f3470;
+    margin: 25px;
+}
+
+.instruction {
+    color: #666;
+}
+
+.domino-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.domino {
+    display: flex;
+    width: 210px;
+    height: 90px;
+    background: white;
+    border: 3px solid #354f9b;
+    border-radius: 14px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: 0.2s;
+}
+
+.domino:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 7px 15px rgba(0,0,0,0.15);
+}
+
+.domino-left,
+.domino-right {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.domino-left {
+    background: #e7edff;
+    border-right: 2px solid #354f9b;
+}
+
+.domino-right {
+    font-size: 16px;
+    padding: 5px;
+}
+
+#message {
+    min-height: 30px;
+    margin: 25px;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.ai-box {
+    background: #fff6cc;
+    padding: 20px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.ai-box button {
+    padding: 12px 25px;
+    background: #354f9b;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.chain-box {
+    margin-top: 25px;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+#chain {
+    font-size: 17px;
+    line-height: 2;
+    color: #263c7a;
+}

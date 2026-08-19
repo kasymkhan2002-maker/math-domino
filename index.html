@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Рационал сандар — Математикалық домино</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🧠 Математикалық домино</h1>
+
+    <h2>Рационал сандарға арифметикалық амалдар қолдану</h2>
+
+    <p class="description">
+        Есепті шығар → дұрыс жауапты таңда → домино тізбегін жалғастыр!
+    </p>
+
+    <div class="level-box">
+
+    <span>🎚️ Деңгейді таңда:</span>
+
+    <button onclick="setLevel('easy')" id="easyBtn">
+        🟢 Жеңіл
+    </button>
+
+    <button onclick="setLevel('medium')" id="mediumBtn">
+        🟡 Орта
+    </button>
+
+    <button onclick="setLevel('hard')" id="hardBtn">
+        🔴 Қиын
+    </button>
+
+</div>
+<div class="info">
+        <div>⭐ Ұпай: <span id="score">0</span></div>
+        <div>🎯 Есеп: <span id="questionNumber">1</span></div>
+        <div>🔥 Қатарынан: <span id="streak">0</span></div>
+    </div>
+
+    <!-- Шығарылатын есеп -->
+    <div class="question-box">
+
+        <p>Есептеңіз:</p>
+
+        <div id="question"></div>
+
+        <p class="instruction">
+            Дұрыс жауабы бар доминоны таңдаңыз.
+        </p>
+
+    </div>
+
+    <!-- Домино карточкалары -->
+    <div id="dominoContainer" class="domino-container"></div>
+
+    <!-- Дұрыс немесе қате -->
+    <div id="message"></div>
+
+    <!-- ЖИ көмекші -->
+    <div class="ai-box">
+
+        <h3>🤖 ЖИ көмекші</h3>
+
+        <p id="aiMessage">
+            Есеп қиын болса, көмек сұра.
+        </p>
+
+        <button onclick="getAIHelp()">
+            💡 ЖИ көмегін алу
+        </button>
+
+    </div>
+
+    <!-- Домино тізбегі -->
+    <div class="chain-box">
+
+        <h3>🔗 Менің домино тізбегім</h3>
+
+        <div id="chain">
+            Ойын басталды...
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
